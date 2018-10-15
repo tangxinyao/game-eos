@@ -1,0 +1,88 @@
+.game {
+  color: #776e65;
+  padding:16px 0;
+  line-height: 1;
+  font-weight: bold;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    h1 {
+      font-size: 32px;
+      padding-bottom: 24px;
+    }
+    .score {
+      display: flex;
+      section {
+        background-color: #bbada0;
+        border-radius: 4px;
+        padding: 8px 16px;
+        margin: 0 0 16px 16px;
+        text-align: center;
+        :first-child {
+          color: #eee4da;
+          font-size: 12px;
+        }
+        :last-child {
+          color: #fff;
+          font-size: 24px;
+          padding-top: 4px;
+        }
+      }
+    }
+  }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    a {
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      display: block;
+      padding: 16px;
+      width: 48px;
+      transition: filter 0.25s;
+      background-color: #8f7a66;
+      &:active {
+        filter: brightness(1.25);
+      }
+      &:first-child {
+        background-color: #f67c5f;
+        width: 96px;
+      }
+    }
+  }
+}
+
+.record-header {
+  font-weight: bold;
+}
+
+.record-row {
+  display: flex;
+  font-size: weight;
+  color: #776e65;
+  span {
+    display: block;
+    margin: 6px;
+    text-align: center;
+    width: 48px;
+  }
+}
+.record-button {
+  border-radius: 4px;
+  color: #fff;
+  background-color: #f67c5f;
+  cursor: pointer;
+  display: block;
+  padding: 8px;
+  box-sizing: border-box;
+  transition: filter 0.25s;
+  margin-top: 16px;
+  text-align: center;
+  &:active {
+    filter: brightness(1.25);
+  };
+}

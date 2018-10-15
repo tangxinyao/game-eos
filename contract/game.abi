@@ -1,0 +1,65 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Oct 12 11:11:51 2018",
+    "version": "eosio::abi/1.0",
+    "structs": [
+        {
+            "name": "insert",
+            "base": "",
+            "fields": [
+                {
+                    "name": "supervisor",
+                    "type": "name"
+                },
+                {
+                    "name": "participant",
+                    "type": "name"
+                },
+                {
+                    "name": "score",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "record_t",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "user",
+                    "type": "name"
+                },
+                {
+                    "name": "score",
+                    "type": "uint64"
+                },
+                {
+                    "name": "updated_at",
+                    "type": "uint64"
+                }
+            ]
+        }
+    ],
+    "types": [],
+    "actions": [
+        {
+            "name": "insert",
+            "type": "insert",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "record",
+            "type": "record_t",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "abi_extensions": []
+}
