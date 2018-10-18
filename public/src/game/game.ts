@@ -1,8 +1,8 @@
 import { Map } from "core-js";
-import { observable } from 'mobx';
+import { observable } from "mobx";
 import * as PIXI from "pixi.js";
 import TWEEN from "tween.js";
-import { TouchEventEmitter } from './touch';
+import { TouchEventEmitter } from "./touch";
 
 interface ICell {
   id: string;
@@ -12,6 +12,10 @@ interface ICell {
 }
 
 export class Game {
+  @observable
+  public score: number;
+  public finished: boolean;
+
   private grid: ICell[];
   private width: number;
   private colorMap: Map<number, number>;
@@ -19,12 +23,11 @@ export class Game {
 
   private app: PIXI.Application;
   private graphic: PIXI.Graphics;
-
-  @observable
-  public score: number;
+  private touch: TouchEventEmitter;
 
   constructor(dom: HTMLElement, socket: SocketIOClient.Socket) {
     this.score = 0;
+    this.finished = false;
     this.grid = [];
     this.width = Math.floor(dom.clientWidth / 8) * 8;
     this.app = new PIXI.Application(this.width, this.width, { backgroundColor: 0xbbada0 });
@@ -32,7 +35,7 @@ export class Game {
     // init graphics
     this.graphic = new PIXI.Graphics();
     this.graphic.interactive = true;
-    new TouchEventEmitter(socket);
+    this.touch = new TouchEventEmitter(socket);
     const spanWidth = Math.floor(this.width / 4 - 2);
     const length = 4;
     for (let i = 0; i < length; i ++) {
@@ -72,18 +75,22 @@ export class Game {
     const adds = [];
     const dels = [];
     for (const action of actions) {
-      switch(action.action) {
-        case 'move':
+      console.log(action);
+      switch (action.action) {
+        case "move":
           moves.push(action.payload);
           break;
-        case 'add':
+        case "add":
           adds.push(action.payload);
           break;
-        case 'delete':
+        case "delete":
           dels.push(action.payload);
           break;
-        case 'score':
+        case "score":
           this.score = action.payload;
+          break;
+        case "finish":
+          this.finished = true;
       }
     }
     for (const move of moves) {
@@ -98,7 +105,7 @@ export class Game {
         graphic.drawRect(0, 0, width, height);
         const text = graphic.getChildAt(0) as PIXI.Text;
         text.text = String(move.value);
-        const style = new PIXI.TextStyle({ fontSize: 32, fill: move.value > 4 ? '#fff' : '#776e65' });
+        const style = new PIXI.TextStyle({ fontSize: 32, fill: move.value > 4 ? "#fff" : "#776e65" });
         text.style = style;
         text.x = spanWidth / 2 - text.width / 2;
         text.y = spanWidth / 2 - text.height / 2;
@@ -113,7 +120,7 @@ export class Game {
             TWEEN.remove(tween);
           })
           .start();
-          TWEEN.add(tween);
+        TWEEN.add(tween);
       }
     }
     for (const add of adds) {
@@ -125,7 +132,7 @@ export class Game {
       // Draw text
       const temp = this.colorMap.get(add.value);
       const color = temp || 0xc3b3a2;
-      const style = new PIXI.TextStyle({ fontSize: 32, fill: '#776e65' });
+      const style = new PIXI.TextStyle({ fontSize: 32, fill: "#776e65" });
       const text = new PIXI.Text(String(add.value), style);
       text.x = spanWidth / 2 - text.width / 2;
       text.y = spanWidth / 2 - text.height / 2;

@@ -1,13 +1,13 @@
-import { inject, observer } from 'mobx-react';
-import React from 'react';
-import * as PIXI from 'pixi.js';
-import Modal from 'react-modal';
-import moment from 'moment';
+import { inject, observer } from "mobx-react";
+import moment from "moment";
+import * as PIXI from "pixi.js";
+import React from "react";
+import Modal from "react-modal";
 
-import { store } from '../index';
-import { Store } from '../store';
+import { store } from "../index";
+import { Store } from "../store";
 
-import './game.scss';
+import "./game.scss";
 
 interface IGameViewProps {
   store ?: Store;
@@ -17,7 +17,7 @@ interface IGameViewState {
   isModalOpen: boolean;
 }
 
-@inject(stores => {
+@inject((stores) => {
   return stores;
 })
 @observer
@@ -26,12 +26,12 @@ export class GameView extends React.Component<IGameViewProps, IGameViewState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      isModalOpen: false
+      isModalOpen: false,
     };
     this.ref = this.ref.bind(this);
     this.handleStart = this.handleStart.bind(this);
     this.handleEnd = this.handleEnd.bind(this);
-    this.handleList = this.handleList.bind(this)
+    this.handleList = this.handleList.bind(this);
     this.handleHideRecord = this.handleHideRecord.bind(this);
   }
   public componentDidMount() {
@@ -51,7 +51,7 @@ export class GameView extends React.Component<IGameViewProps, IGameViewState> {
             </section>
             <section>
               <div>SCORE</div>
-              <div>{this.props.store && this.props.store.game && this.props.store.game.score}</div>
+              <div>{this.props.store && this.props.store.getScore()}</div>
             </section>
             {/* <section>
               <div>BEST</div>
@@ -67,7 +67,15 @@ export class GameView extends React.Component<IGameViewProps, IGameViewState> {
         <Modal
           ariaHideApp={false}
           isOpen={this.state.isModalOpen}
-          style={{content: {top: '50%', left: '50%', right: 'auto', bottom: 'auto', transform: 'translate(-50%, -50%)'}}}>
+          style={{
+            content: {
+              bottom: "auto",
+              left: "50%",
+              right: "auto",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+            },
+          }}>
           <div className="record-row record-header">
             <span>Rank</span>
             <span>User</span>
@@ -81,9 +89,9 @@ export class GameView extends React.Component<IGameViewProps, IGameViewState> {
                   <span>{index + 1}</span>
                   <span>{record.user}</span>
                   <span>{record.score}</span>
-                  <span>{moment(Number(record.updated_at) / 1000).format('MM-DD')}</span>
+                  <span>{moment(Number(record.updated_at) / 1000).format("MM-DD")}</span>
                 </div>
-              )
+              );
             })
           }
           <a className="record-button" onClick={this.handleHideRecord}>Return</a>

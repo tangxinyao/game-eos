@@ -1,5 +1,5 @@
-import { EventEmitter } from "./event";
 import { TouchEvent } from "react";
+import { EventEmitter } from "./event";
 
 export class TouchEventEmitter extends EventEmitter<any> {
   private x: number;
@@ -22,7 +22,6 @@ export class TouchEventEmitter extends EventEmitter<any> {
     document.addEventListener("touchend", this.handleTouchEnd.bind(this));
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
   }
-  
 
   private handleTouchStart(e: TouchEvent) {
     this.x = e.touches[0].clientX;
@@ -62,22 +61,22 @@ export class TouchEventEmitter extends EventEmitter<any> {
     if ((deltaX === 0) && (deltaY === 0)) {
       return;
     }
-    this.socket.emit('move', deltaX, deltaY);
+    this.socket.emit("move_req", deltaX, deltaY);
   }
 
   private handleKeyDown(e: KeyboardEvent) {
-    switch(e.keyCode) {
+    switch (e.keyCode) {
       case 37:
-        this.socket.emit('move', -1, 0);
+        this.socket.emit("move_req", -1, 0);
         break;
       case 38:
-        this.socket.emit('move', 0, -1);
+        this.socket.emit("move_req", 0, -1);
         break;
       case 39:
-        this.socket.emit('move', 1, 0);
+        this.socket.emit("move_req", 1, 0);
         break;
       case 40:
-        this.socket.emit('move', 0, 1);
+        this.socket.emit("move_req", 0, 1);
         break;
     }
   }

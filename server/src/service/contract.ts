@@ -7,10 +7,10 @@ export interface IRecord {
   updated_at: string;
 }
 
-export class GameContractService {
+export class ContractService {
   private eos: any;
 
-  public constructor() {
+  constructor() {
     this.eos = EOS({
       httpEndpoint: "http://127.0.0.1:7777",
       keyProvider: "5JYrjJ25Sx8vdkecyYU8XRsDJQEiV23KP8qBLniRFGphSCYq1VL",
@@ -45,8 +45,21 @@ export class GameContractService {
   }
 
   public async getRecords(): Promise<IRecord[]> {
-    const records = await this.eos.getTableRows(true, "game", "game", "record");
-    return records.rows;
+    // let more = true;
+    // let rows: any[] = [];
+    // let offset = 0;
+    // while (more === true) {
+    //   const records = await this.eos.getTableRows(true, "game", "game", "record", "id", offset, offset + 10, 100);
+    //   console.log(records);
+    //   more = records.more;
+    //   rows = rows.concat(records.rows);
+    //   offset += 10;
+    // }
+    const records = await this.eos.getTableRows(true, "game", "game", "record", "id", 0, 100, 100);
+    const rows = (records.rows as any[]).sort((pre, cur) => {
+      return pre.score < cur.score ? 1 : pre.score === cur.score ? 0 : -1;
+    });
+    return rows;
   }
 
   public async insertRecord(user: string, score: number) {

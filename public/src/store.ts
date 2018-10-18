@@ -1,15 +1,13 @@
-import io from 'socket.io-client';
-import { NotificationManager } from 'react-notifications';
+import { action, observable } from "mobx";
+import { NotificationManager } from "react-notifications";
+import io from "socket.io-client";
+import { Game } from "./game";
+import { TouchEventEmitter } from "./game/touch";
 
-import { Game } from './game';
-import { TouchEventEmitter } from './game/touch';
-import { observable } from 'mobx';
+// As scripts executed, Store is instiantiated, and socket connection will be built immediately.
+// After a short time, when DOM has been rendered, the game can be attached.
 
 export class Store {
-  private dom?: HTMLElement;
-  private socket: SocketIOClient.Socket;
-  public game?: Game;
-
   @observable
   public name?: string;
   @observable
@@ -21,45 +19,61 @@ export class Store {
   @observable
   public balance?: number;
 
+  private game?: Game;
+  private socket: SocketIOClient.Socket;
+  private dom?: HTMLElement;
+
   constructor() {
-    this.name = 'alice';
-    this.socket = io('http://47.100.208.79:3000');
-    this.socket.on('connect', this.handleConnect.bind(this));
-    this.socket.on('records', this.handleRecords.bind(this));
-    this.socket.on('balance', this.handleBalance.bind(this));
-    this.socket.on('end', this.handleEnd.bind(this));
-    this.socket.on('actions', this.handleActions.bind(this));
+    this.name = "alice";
+    this.socket = io((window as any).env.url);
+    this.socket.on("connect", this.handleConnect.bind(this));
+    this.socket.on("login_resp", this.handleLogin.bind(this));
+    this.socket.on("get_records_resp", this.handleRecords.bind(this));
+    this.socket.on("get_balance_resp", this.handleBalance.bind(this));
+    this.socket.on("end_resp", this.handleEnd.bind(this));
+    this.socket.on("error_resp", this.handleError.bind(this));
+    this.socket.on("actions_resp", this.handleActions.bind(this));
   }
 
-  public initialGame(dom: HTMLElement) {
-    this.dom = dom;
-    this.game = new Game(dom, this.socket);
+  public getScore() {
+    return this.game && this.game.score || 0;
   }
 
   public startGame() {
     if (this.game) {
       this.game.init();
     }
-    this.socket.emit('start', this.name);
+    this.socket.emit("start_req");
   }
 
   public endGame() {
     if (this.game) {
       this.game.init();
     }
-    this.socket.emit('end');
+    this.socket.emit("end_req");
   }
 
+  // Initial the game, tell pixi.js which dom to use.
+  public initialGame(dom: HTMLElement) {
+    this.dom = dom;
+    this.game = new Game(dom, this.socket);
+  }
+
+  // As socket has been connected, user logged in.
   private handleConnect(data: any) {
-    this.socket.emit('records');
-    this.socket.emit('balance', this.name);
+    this.socket.emit("login_req", this.name);
+  }
+
+  // After user logged in, retrieve the balance and records.
+  private handleLogin() {
+    this.socket.emit("get_balance_req");
+    this.socket.emit("get_records_req");
   }
 
   private handleBalance(data: any) {
     this.balance = data;
   }
 
-  // TODO: handle recordList, get my max socre and global max score
   private handleRecords(records: any) {
     this.records = records.splice(0, 10);
     this.maxScore = records[0] && records[0].score || 0;
@@ -67,20 +81,26 @@ export class Store {
   }
 
   private handleEnd(data: any) {
-    console.log(data);
-    if (data === 'lose') {
-      NotificationManager.error('You lose.', 'Sorry');
-    } else if (data === 'win') {
-      this.socket.emit('records');
-      NotificationManager.success('You win.', 'Congradulations');
-    } else if (data === 'score') {
-      NotificationManager.success('You keep your record for 1 day.', 'Congradulations');
+    if (data === "lose") {
+      NotificationManager.error("You lose.", "Sorry");
+    } else if (data === "win") {
+      this.socket.emit("records");
+      NotificationManager.success("You win.", "Congradulations");
+    } else if (data === "score") {
+      NotificationManager.success("You keep your record for 1 day.", "Congradulations");
     }
   }
 
   private handleActions(actions: any[]) {
     if (this.game) {
       this.game.dispatch(actions);
+      if (this.game.finished) {
+        this.endGame();
+      }
     }
+  }
+
+  private handleError(data: any) {
+    console.log(data);
   }
 }

@@ -4,10 +4,13 @@
   "description": "",
   "main": "gulpfile.js",
   "dependencies": {
+    "@types/core-js": "^2.5.0",
+    "core-js": "^2.5.7",
     "cors": "^2.8.4",
     "eosjs": "^16.0.9",
     "express": "^4.16.3",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@types/chai": "^4.1.5",
@@ -16,6 +19,7 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.11.4",
     "@types/socket.io": "^1.4.38",
+    "@types/uuid": "^3.4.4",
     "chai": "^4.1.2",
     "gulp": "^3.9.1",
     "gulp-changed": "^3.2.0",

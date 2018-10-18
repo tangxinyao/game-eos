@@ -1,2 +1,2 @@
-export { Game } from './game';
-export { GameView } from './game-view';
+export { Game } from "./game";
+export { GameView } from "./game-view";
